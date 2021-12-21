@@ -32,7 +32,7 @@ def writetofile(inputtext='', hostname='CI', outputextension='txt'):
     pass
 
 
-# list all commands to run
+# run command
 command = 'show running-config'
 
 with open("devices.yaml") as f:
