@@ -1,5 +1,6 @@
 import datetime
 import yaml
+import getpass
 from netmiko import (
     ConnectHandler,
     NetmikoTimeoutException,
@@ -34,10 +35,20 @@ def writetofile(inputtext='', hostname='CI', outputextension='txt'):
 
 # run command
 command = 'show running-config'
+#  username: admin
+#  password: C1sco12345
+#  secret: cisco
+username = input('username: ')
+password = getpass.getpass('password: ')
+secretpass = getpass.getpass('secret password: ')
+
 
 with open("devices.yaml") as f:
     devices = yaml.safe_load(f)
 for device in devices:
+    device['username'] = username
+    device['password'] = password
+    device['secret'] = secretpass
     result = send_show_command(device, command)
     # result commands = {'command':'output'}
     writetofile(result, device['host'])
