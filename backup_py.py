@@ -125,6 +125,9 @@ for host in hostlist:
         # outputdata = sendcommand(netconn, f"{commandlist[0]}")
         # mscfunc.writestringtofile(host['device_name']+".txt", [outputdata])
         outputdata = sendcommands(netconn, commandlist)
+        outputfile = host['hostname']
+        if (host['device_name']):
+            outputfile = host['device_name']
         mscfunc.writestringtofile(host['device_name']+".txt", outputdata)
         # Disconnect
         netconn.disconnect()
