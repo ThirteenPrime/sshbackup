@@ -20,7 +20,7 @@ main.py
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", required=True, help="devices file .csv format")
 parser.add_argument("-d", required=False,
-                    help="devices type\ncisco_ios\njuniper_junos", default="cisco_ios")
+                    help="devices type:cisco_ios(default),juniper_junos", default="cisco_ios")
 parser.add_argument("-c", required=False,
                     help="command file list default: show run")
 args = parser.parse_args()
