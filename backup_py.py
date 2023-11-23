@@ -18,7 +18,11 @@ main.py
 #"""
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-f", required=True, help="device file")
+parser.add_argument("-f", required=True, help="devices file .csv format")
+parser.add_argument("-d", required=False,
+                    help="devices type\ncisco_ios\njuniper_junos", default="cisco_ios")
+parser.add_argument("-c", required=False,
+                    help="command file list default: show run")
 args = parser.parse_args()
 # password = getpass()
 username = input("username: ")
@@ -27,7 +31,7 @@ password = getpass()
 # password = "C1sco12345"
 
 # devtype = "juniper_junos"
-devtype = "cisco_ios"
+devtype = args.d
 
 # device = {
 #    "device_type":"juniper_junos",
@@ -57,7 +61,7 @@ def connect(hostname="junos.google.comasdf", device_type="juniper_junos"):
 
 def sendcommands(net_connect, commands=["show version"]):
     output_data = []
-    pipecommands = " | no-more"
+    pipecommands = ""
     # pipecommands=""
     for command in commands:
         try:
@@ -71,7 +75,7 @@ def sendcommands(net_connect, commands=["show version"]):
 
 def sendcommand(net_connect, command="show version"):
     output_data = ""
-    pipecommands = " |no-more"
+    pipecommands = ""
     # pipecommands=""
     try:
         net_connect.send_command("\r")
@@ -92,18 +96,25 @@ with open('hostfile.txt', 'r') as f:
 # hostlist
 hostlist = []
 filename = args.f
-filename = 'devices.csv'
+# filename = 'devices.csv'
 try:
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             hostlist.append(row)
 except:
-    errorfunc.devicescsv(filename)
+    errorfunc.devicescsv_error(filename)
 # connect to device
 data = {}
 # Command list to run 0-2 list static
-commandlist = ["show run"]
+
+filename = args.c
+try:
+    with open(filename, newline='') as f:
+        commandlist = f.read().splitlines()
+except:
+    commandlist = ["show run"]
+# connect to device
 
 outputdata_arptable = {}
 for host in hostlist:

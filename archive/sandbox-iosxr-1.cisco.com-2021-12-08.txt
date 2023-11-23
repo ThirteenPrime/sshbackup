@@ -1,0 +1,379 @@
+Wed Dec  8 15:50:02.018 UTC
+Building configuration...
+!! IOS XR Configuration 7.3.2
+!! Last configuration change at Tue Dec  7 14:51:27 2021 by admin
+!
+hostname AAA
+logging console disable
+username root
+ group root-lr
+ group cisco-support
+ secret 10 $6$XvYiZ/CdPNuK4Z/.$3/15yGC1Br2nlIy/AwZVNsl0BbD.XLbqAL2h8hR4CpBxM.ir4ZilYykiaTqMwe/EB6UySyH7ea/x09ajR6NXz.
+!
+username admin
+ group root-lr
+ group cisco-support
+ secret 10 $6$vEaDc/Yt1OyU4c/.$v0lze75JluVDfcM6rgDlsFY3oMB6ODv6l5rgRnk3bFrvnzSFnoEIF.hcc1O/2.YxnAuRLSy7VQGmGedvoBlOp.
+!
+username user
+ group read-only-tg
+ secret 10 $6$IQ9Ps/rm4SgV5s/.$oucg3.3lEWdh9UuiofkUs9065e9M85SP/KCMrjsZPE3cf8n.toCAdL5QWv.zINqr0bJqUWzgVbQP6C1jqFmfw1
+!
+cdp
+grpc
+ port 57344
+ address-family ipv4
+!
+telemetry model-driven
+ destination-group Group1
+  address-family ipv4 1.2.3.4 port 5432
+   encoding self-describing-gpb
+   protocol tcp
+  !
+ !
+ destination-group DGroup1
+  address-family ipv4 172.0.0.0 port 5432
+   encoding self-describing-gpb
+   protocol tcp
+  !
+ !
+ destination-group DGroup2
+  address-family ipv4 172.0.0.0 port 57500
+   encoding self-describing-gpb
+   protocol grpc
+  !
+ !
+ destination-group DGroup3
+  address-family ipv4 172.0.0.0 port 57000
+   encoding json
+   protocol grpc no-tls
+  !
+ !
+ sensor-group SGroup1
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+ !
+ sensor-group SGroup2
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+ !
+ sensor-group SGroup3
+  sensor-path Cisco-IOS-XR-ipv4-arp-oper:arp/nodes/node/entries/entry
+ !
+ sensor-group contadores-genericos
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+ !
+ subscription Dial-out_Sub1
+  sensor-group-id SGroup1 sample-interval 3000
+  destination-id DGroup1
+ !
+ subscription Dial-out_Sub2
+  sensor-group-id SGroup2 sample-interval 3000
+  destination-id DGroup2
+ !
+ subscription subscripcion1-event-drive
+  sensor-group-id contadores-genericos sample-interval 0
+  destination-id chpicot
+ !
+!
+vrf red
+ rd 1000:1000
+!
+vrf ACME
+ description ACME Corporation
+ address-family ipv4 unicast
+  import route-target
+   65000:2
+   65000:3
+  !
+  export route-target
+   65000:2
+   65000:3
+  !
+ !
+!
+vrf RGB_ACME
+ address-family ipv4 unicast
+  import route-target
+   65000:2
+  !
+  export route-target
+   65000:2
+  !
+ !
+!
+vrf RGA_POLICE
+ description POLICE DEPARTMENT
+ address-family ipv4 unicast
+  import route-target
+   65000:1
+  !
+  export route-target
+   65000:1
+  !
+ !
+ address-family ipv6 unicast
+  import route-target
+   65000:1
+  !
+  export route-target
+   65000:1
+  !
+ !
+!
+vrf RGA_CHEMICAL
+ description CHEMICAL ENGINEERING FIRM
+ address-family ipv4 unicast
+  import route-target
+   65000:2
+   65000:3
+  !
+  export route-target
+   65000:2
+   65000:4
+  !
+ !
+ address-family ipv6 unicast
+  import route-target
+   65000:2
+   65000:3
+  !
+  export route-target
+   65000:2
+   65000:4
+  !
+ !
+!
+tpa
+ vrf default
+  address-family ipv4
+   default-route mgmt
+  !
+ !
+!
+line console
+ exec-timeout 10 0
+ absolute-timeout 0
+ session-timeout 0
+!
+line default
+ exec-timeout 10 0
+ absolute-timeout 0
+ session-timeout 0
+!
+ntp
+ server 3.3.3.3
+ server 4.4.4.4
+ server 5.5.5.5
+ server 6.6.6.6
+!
+call-home
+ service active
+ contact smart-licensing
+ profile CiscoTAC-1
+  active
+  destination transport-method http
+ !
+!
+netconf-yang agent
+ ssh
+!
+ipv4 access-list a1
+ 10 deny icmp any any
+ 20 permit ipv4 any any
+!
+class-map match-any cm1
+ match access-group ipv4 a1 
+ end-class-map
+! 
+policy-map pm1
+ class cm1
+  police rate 100000 bps 
+  ! 
+ ! 
+ class class-default
+ ! 
+ end-policy-map
+! 
+interface Bundle-Ether4
+ description "Test Interface"
+!
+interface Bundle-Ether4.101300
+ description "Test"
+ encapsulation dot1q 101 second-dot1q 202
+!
+interface Loopback1
+ ipv4 address 192.168.1.1 255.255.255.0
+!
+interface Loopback10
+ description Created via YAML
+!
+interface Loopback11
+ description *** RGA-Ansible ***
+ ipv4 address 121.1.1.1 255.255.255.255
+!
+interface Loopback75
+!
+interface Loopback76
+!
+interface Loopback77
+!
+interface Loopback78
+!
+interface Loopback79
+!
+interface Loopback80
+!
+interface Loopback81
+!
+interface Loopback82
+!
+interface Loopback83
+!
+interface Loopback84
+!
+interface Loopback100
+!
+interface Loopback1000
+ ipv4 address 192.168.0.250 255.255.255.0
+!
+interface MgmtEth0/RP0/CPU0/0
+ ipv4 address 10.10.20.175 255.255.255.0
+!
+interface GigabitEthernet0/0/0/1
+ description -- SD-WAN from Cam-1 to Cam-0 for contract 000 --
+ ipv4 address 10.10.0.1 255.255.255.0
+!
+interface GigabitEthernet0/0/0/3.144 l2transport
+!
+interface GigabitEthernet0/0/0/4
+ ipv4 address 10.10.20.190 255.255.255.0
+!
+interface GigabitEthernet0/0/0/4.101
+ ipv4 address 10.10.20.191 255.255.255.0
+!
+interface GigabitEthernet0/0/0/4.102
+ ipv4 address 10.10.20.192 255.255.255.0
+!
+interface GigabitEthernet0/0/0/5
+ ipv4 address 10.10.21.190 255.255.255.0
+!
+interface GigabitEthernet0/0/0/5.101
+ ipv4 address 10.10.21.191 255.255.255.0
+!
+interface GigabitEthernet0/0/0/5.102
+ ipv4 address 10.10.21.192 255.255.255.0
+!
+interface GigabitEthernet0/0/0/5.103
+ ipv4 address 10.10.21.193 255.255.255.0
+!
+interface GigabitEthernet0/0/0/6
+ ipv4 address 10.60.0.1 255.255.255.0
+!
+prefix-set testing
+  10.2.3.0/24 le 28
+end-set
+!
+router static
+ address-family ipv4 unicast
+  10.230.0.0/16 1.1.1.14 description PH1_Subnet
+  10.230.128.0/17 1.1.1.14 description PH3_Subnet
+  10.231.0.0/16 1.1.1.14 description PH4_Subnet
+ !
+!
+router isis ROISIS
+!
+router ospf 1000
+ log adjacency changes detail
+ router-id 172.16.100.1
+ network point-to-point
+ passive enable
+ hello-interval 1
+ maximum redistributed-prefixes 4000
+ area 0
+  interface Bundle-Ether4
+   cost 65000
+   passive disable
+   cost-fallback 65100 threshold 200001
+  !
+  interface Bundle-Ether40
+   cost-fallback 65100 threshold 100001
+  !
+ !
+ area 420
+  interface Bundle-Ether42
+   cost-fallback 2000 threshold 70001
+  !
+  interface Bundle-Ether43
+   cost-fallback 2000 threshold 50001
+  !
+  interface Bundle-Ether44
+   cost-fallback 2000 threshold 50001
+  !
+  interface Bundle-Ether45
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether46
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether47
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether48
+   cost-fallback 2000 threshold 20001
+  !
+  interface Bundle-Ether49
+   cost-fallback 2000 threshold 20001
+  !
+  interface Bundle-Ether50
+   cost-fallback 2000 threshold 30001
+  !
+  interface Bundle-Ether51
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether52
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether53
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether54
+   cost-fallback 2000 threshold 20001
+  !
+  interface Bundle-Ether55
+   cost-fallback 2000 threshold 20001
+  !
+  interface Bundle-Ether56
+   cost-fallback 2000 threshold 10001
+  !
+  interface Bundle-Ether73
+   cost-fallback 200 threshold 100001
+  !
+  interface Bundle-Ether74
+   cost-fallback 200 threshold 100001
+  !
+ !
+!
+router bgp 65503
+!
+bmp server 1
+!
+multicast-routing
+ address-family ipv4
+  interface Bundle-Ether19
+   enable
+  !
+  interface Bundle-Ether20
+   enable
+  !
+ !
+!
+xml agent tty
+ iteration off
+!
+xml agent
+!
+netconf agent tty
+!
+ssh server v2
+ssh server vrf default
+ssh server netconf vrf default
+end
