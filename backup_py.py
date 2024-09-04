@@ -95,15 +95,15 @@ with open('hostfile.txt', 'r') as f:
 
 # hostlist
 hostlist = []
-devicefilename = args.f
+filename = args.f
 # filename = 'devices.csv'
 try:
-    with open(devicefilename, newline='') as csvfile:
+    with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             hostlist.append(row)
 except:
-    errorfunc.devicescsv_error(devicefilename)
+    errorfunc.devicescsv_error(filename)
 # connect to device
 data = {}
 # Command list to run 0-2 list static
@@ -124,10 +124,12 @@ for host in hostlist:
     if (netconn):
         # outputdata = sendcommand(netconn, f"{commandlist[0]}")
         # mscfunc.writestringtofile(host['device_name']+".txt", [outputdata])
-        outputdata = sendcommands(netconn, commandlist)
+        charspace = '#'
+        outputdata = [f"{charspace*10} {host['hostname']} {charspace*10}\n"]
+        outputdata.append(sendcommands(netconn, commandlist))
         outputfile = host['hostname']
         if (host['device_name']):
             outputfile = host['device_name']
-        mscfunc.writestringtofile(host['device_name']+".txt", outputdata)
+        mscfunc.writestringtofile(outputfile+".log", outputdata)
         # Disconnect
         netconn.disconnect()

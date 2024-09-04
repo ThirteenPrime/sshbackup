@@ -13,7 +13,8 @@ def iptodns(ipaddstr="8.8.8.8"):
 def writestringtofile(filename, inputdata=[]):
     if inputdata:
         print(f"{filename} - writing")
-        with open(f'{filename}', 'w', encoding="utf-8") as f:
+        inputdata.append('\n')
+        with open(f'{filename}', 'a', encoding="utf-8") as f:
             for output in inputdata:
                 f.write(output)
             print(f"{filename} - complete")
