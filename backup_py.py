@@ -95,15 +95,15 @@ with open('hostfile.txt', 'r') as f:
 
 # hostlist
 hostlist = []
-filename = args.f
+devicefilename = args.f
 # filename = 'devices.csv'
 try:
-    with open(filename, newline='') as csvfile:
+    with open(devicefilename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             hostlist.append(row)
 except:
-    errorfunc.devicescsv_error(filename)
+    errorfunc.devicescsv_error(devicefilename)
 # connect to device
 data = {}
 # Command list to run 0-2 list static
